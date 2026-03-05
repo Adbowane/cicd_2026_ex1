@@ -1,26 +1,26 @@
-name: Lint and build
+name: CI and Deploy
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  lint-built:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
-      - run: npm install
-      - run: npm run lint
-      - run: npm run build
-  deploy:
-    runs-on: ubuntu-latest
-    needs: lint-built
-    steps:
-    - name : Deploy to Render
-      run : curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
-      env:
-        RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Compile TypeScript
+        run: npm run ts
